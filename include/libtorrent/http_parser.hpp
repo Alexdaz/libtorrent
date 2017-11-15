@@ -40,9 +40,14 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <cstdint>
 #include <tuple>
 
+#include "libtorrent/aux_/disable_warnings_push.hpp"
+#include <boost/optional.hpp>
+#include "libtorrent/aux_/disable_warnings_pop.hpp"
+
 #include "libtorrent/config.hpp"
 #include "libtorrent/span.hpp"
 #include "libtorrent/string_view.hpp"
+#include "libtorrent/time.hpp" // for seconds32
 
 namespace libtorrent {
 
@@ -62,7 +67,7 @@ namespace libtorrent {
 		explicit http_parser(int flags = 0);
 		~http_parser();
 		std::string const& header(string_view key) const;
-		std::int64_t header_int(string_view key, std::int64_t def_value) const;
+		boost::optional<seconds32> header_duration(string_view key) const;
 		std::string const& protocol() const { return m_protocol; }
 		int status_code() const { return m_status_code; }
 		std::string const& method() const { return m_method; }

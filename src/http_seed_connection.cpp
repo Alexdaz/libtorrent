@@ -274,7 +274,9 @@ namespace libtorrent {
 				// if the status code is not one of the accepted ones, abort
 				if (!is_ok_status(m_parser.status_code()))
 				{
-					int const retry_time = aux::numeric_cast<int>(m_parser.header_int("retry-after", 5 * 60));
+					auto const retry_time = m_parser.header_duration("retry-after")
+						.value_or(minutes32(5));
+
 					// temporarily unavailable, retry later
 					t->retry_web_seed(this, retry_time);
 
@@ -420,7 +422,7 @@ namespace libtorrent {
 
 				received_bytes(0, int(bytes_transferred));
 				// temporarily unavailable, retry later
-				t->retry_web_seed(this, retry_time);
+				t->retry_web_seed(this, seconds32(retry_time));
 				disconnect(error_code(m_parser.status_code(), http_category()), operation_t::bittorrent, 1);
 				return;
 			}
